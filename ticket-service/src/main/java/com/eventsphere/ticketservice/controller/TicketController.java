@@ -2,6 +2,9 @@ package com.eventsphere.ticketservice.controller;
 
 import com.eventsphere.ticketservice.model.Ticket;
 import com.eventsphere.ticketservice.service.TicketService;
+import jakarta.validation.Valid;
+
+
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +23,10 @@ public class TicketController {
     }
 
     @PostMapping
-    public ResponseEntity<Ticket> generateTicket(
-            @RequestBody Ticket ticket
-    ) {
+   public ResponseEntity<Ticket> generateTicket(
+        @Valid @RequestBody Ticket ticket
+)
+     {
         Ticket createdTicket = ticketService.generateTicket(ticket);
 
         return new ResponseEntity<>(
