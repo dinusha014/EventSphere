@@ -22,7 +22,7 @@ X-API-KEY
 
 Value:
 
-EVENTSPHERE2026
+X-API-KEY: <YOUR_API_KEY>
 
 ## Endpoints
 
