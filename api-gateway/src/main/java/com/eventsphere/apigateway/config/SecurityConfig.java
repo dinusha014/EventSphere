@@ -3,6 +3,7 @@ package com.eventsphere.apigateway.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
@@ -20,7 +21,10 @@ public class SecurityConfig {
                 new OAuth2AuthorizationServerConfigurer();
 
         http
-                .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
+                .securityMatcher(
+                        authorizationServerConfigurer.getEndpointsMatcher()
+                )
+                .cors(Customizer.withDefaults())
                 .with(
                         authorizationServerConfigurer,
                         Customizer.withDefaults()
@@ -36,24 +40,48 @@ public class SecurityConfig {
 
         http
                 .securityMatcher("/api/**")
+
+                .cors(Customizer.withDefaults())
+
                 .csrf(csrf -> csrf.disable())
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/events/**")
-                            .hasAuthority("SCOPE_events.read")
+
+                        // Allow browser CORS preflight requests
+                        .requestMatchers(HttpMethod.OPTIONS, "/**")
+                        .permitAll()
+
+                        // Event Service read access
                         .requestMatchers(
-                            org.springframework.http.HttpMethod.POST,
-                            "/api/events/**"
-                        ).hasAuthority("SCOPE_events.write")
+                                HttpMethod.GET,
+                                "/api/events/**"
+                        )
+                        .hasAuthority("SCOPE_events.read")
+
+                        // Event Service write access
                         .requestMatchers(
-                            org.springframework.http.HttpMethod.PUT,
-                            "/api/events/**"
-                        ).hasAuthority("SCOPE_events.write")
+                                HttpMethod.POST,
+                                "/api/events/**"
+                        )
+                        .hasAuthority("SCOPE_events.write")
+
                         .requestMatchers(
-                            org.springframework.http.HttpMethod.DELETE,
-                            "/api/events/**"
-                        ).hasAuthority("SCOPE_events.write")
-                        .anyRequest().authenticated()
+                                HttpMethod.PUT,
+                                "/api/events/**"
+                        )
+                        .hasAuthority("SCOPE_events.write")
+
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/api/events/**"
+                        )
+                        .hasAuthority("SCOPE_events.write")
+
+                        // Other API routes require authentication
+                        .anyRequest()
+                        .authenticated()
                 )
+
                 .oauth2ResourceServer(resourceServer ->
                         resourceServer.jwt(Customizer.withDefaults())
                 );
