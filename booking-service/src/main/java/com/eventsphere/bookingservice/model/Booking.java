@@ -40,7 +40,7 @@ public class Booking {
     private double ticketPrice;
 
     @PositiveOrZero(message = "Total amount cannot be negative")
-    private double totalAmount;
+    private Double totalAmount;
 
     private String bookingStatus;
 
