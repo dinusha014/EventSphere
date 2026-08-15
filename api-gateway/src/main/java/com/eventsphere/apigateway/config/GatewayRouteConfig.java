@@ -6,6 +6,7 @@ import static org.springframework.cloud.gateway.server.mvc.filter.BeforeFilterFu
 import static org.springframework.cloud.gateway.server.mvc.filter.Bucket4jFilterFunctions.rateLimit;
 import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions.route;
 import static org.springframework.cloud.gateway.server.mvc.handler.HandlerFunctions.http;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.function.RouterFunction;
@@ -36,6 +37,18 @@ public class GatewayRouteConfig {
                                     : "unknown-client";
                         })
                 ))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> ticketServiceRoute() {
+
+        return route("ticket-service")
+                .route(request ->
+                        request.path().startsWith("/api/tickets"),
+                        http()
+                )
+                .before(uri("http://localhost:8082"))
                 .build();
     }
 }
