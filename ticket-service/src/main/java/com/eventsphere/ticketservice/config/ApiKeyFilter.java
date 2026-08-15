@@ -1,17 +1,28 @@
 package com.eventsphere.ticketservice.config;
 
+import java.io.IOException;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.eventsphere.ticketservice.repository.ApiKeyRepository;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-
 @Component
 public class ApiKeyFilter extends OncePerRequestFilter {
+
+    private static final String API_KEY_HEADER = "X-API-KEY";
+    private static final String SERVICE_NAME = "ticket-service";
+
+    private final ApiKeyRepository apiKeyRepository;
+
+    public ApiKeyFilter(ApiKeyRepository apiKeyRepository) {
+        this.apiKeyRepository = apiKeyRepository;
+    }
 
     @Override
     protected void doFilterInternal(
@@ -29,11 +40,19 @@ public class ApiKeyFilter extends OncePerRequestFilter {
             return;
         }
 
-        String apiKey = request.getHeader(
-                ApiKeyConstants.API_KEY_HEADER
-        );
+        String apiKey = request.getHeader(API_KEY_HEADER);
 
-        if (!ApiKeyConstants.API_KEY.equals(apiKey)) {
+        boolean validApiKey =
+                apiKey != null &&
+                apiKeyRepository
+                        .findByApiKeyAndServiceNameAndActive(
+                                apiKey,
+                                SERVICE_NAME,
+                                true
+                        )
+                        .isPresent();
+
+        if (!validApiKey) {
 
             response.setStatus(
                     HttpServletResponse.SC_UNAUTHORIZED
