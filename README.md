@@ -500,15 +500,15 @@ The following flows were verified:
 
 # Team Contributions
 
-### Member 1 – Event Service
+### W.G.N.N.Diwaman (ITBIN-2312-0013) – Event Service
 
 Responsible for the Event Management microservice and related functionality.
 
-### Member 2 – Booking Service
+### U.K.R.R.P.Ayuwardhana (ITBIN-2312-0020) – Booking Service
 
 Responsible for the Booking Management microservice and booking-related functionality.
 
-### Member 3 – Ticket & Notification Service / Docker
+### W.H.C.D.J.Karunanayaka (ITBIN-2312-0021) – Ticket & Notification Service / Docker
 
 Responsible for:
 
