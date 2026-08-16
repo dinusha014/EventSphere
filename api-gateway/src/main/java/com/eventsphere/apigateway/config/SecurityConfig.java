@@ -51,33 +51,99 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**")
                         .permitAll()
 
-                        // Event Service read access
+                        // =========================
+                        // Event Service
+                        // =========================
+
+                        // Read events
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/events/**"
                         )
                         .hasAuthority("SCOPE_events.read")
 
-                        // Event Service write access
+                        // Create events
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/events/**"
                         )
                         .hasAuthority("SCOPE_events.write")
 
+                        // Update events
                         .requestMatchers(
                                 HttpMethod.PUT,
                                 "/api/events/**"
                         )
                         .hasAuthority("SCOPE_events.write")
 
+                        // Delete events
                         .requestMatchers(
                                 HttpMethod.DELETE,
                                 "/api/events/**"
                         )
                         .hasAuthority("SCOPE_events.write")
 
-                        // Other API routes require authentication
+
+                        // =========================
+                        // Booking Service
+                        // =========================
+
+                        // Read bookings
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/bookings/**"
+                        )
+                        .hasAuthority("SCOPE_bookings.read")
+
+                        // Create bookings
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/bookings/**"
+                        )
+                        .hasAuthority("SCOPE_bookings.write")
+
+                        // Cancel / update bookings
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/bookings/**"
+                        )
+                        .hasAuthority("SCOPE_bookings.write")
+
+
+                        // =========================
+                        // Ticket Service
+                        // =========================
+
+                        // Read tickets
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/tickets/**"
+                        )
+                        .hasAuthority("SCOPE_tickets.read")
+
+                        // Generate tickets
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/tickets/**"
+                        )
+                        .hasAuthority("SCOPE_tickets.write")
+
+                        // Cancel / update tickets
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/tickets/**"
+                        )
+                        .hasAuthority("SCOPE_tickets.write")
+
+                        // Delete tickets
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/api/tickets/**"
+                        )
+                        .hasAuthority("SCOPE_tickets.write")
+
+
+                        // Any other API route requires authentication
                         .anyRequest()
                         .authenticated()
                 )
