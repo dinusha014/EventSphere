@@ -16,16 +16,35 @@ public class CorsConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-        configuration.setAllowedMethods(
-                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        // Allow frontend applications
+        configuration.setAllowedOrigins(
+                List.of(
+                        "http://localhost:3000",
+                        "http://localhost:5173"
+                )
         );
+
+        // Allow required HTTP methods
+        configuration.setAllowedMethods(
+                List.of(
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "OPTIONS"
+                )
+        );
+
+        // Allow request headers such as Authorization and X-API-KEY
         configuration.setAllowedHeaders(List.of("*"));
+
+        // Allow credentials
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
+        // Apply CORS configuration to all Gateway endpoints
         source.registerCorsConfiguration("/**", configuration);
 
         return new CorsFilter(source);

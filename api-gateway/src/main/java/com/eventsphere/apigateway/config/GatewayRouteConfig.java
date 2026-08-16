@@ -19,8 +19,8 @@ public class GatewayRouteConfig {
     public RouterFunction<ServerResponse> eventServiceRoute() {
 
         return route("event-service")
-                .route(request ->
-                        request.path().startsWith("/api/events"),
+                .route(
+                        request -> request.path().startsWith("/api/events"),
                         http()
                 )
                 .before(uri("http://localhost:8081"))
@@ -44,11 +44,23 @@ public class GatewayRouteConfig {
     public RouterFunction<ServerResponse> ticketServiceRoute() {
 
         return route("ticket-service")
-                .route(request ->
-                        request.path().startsWith("/api/tickets"),
+                .route(
+                        request -> request.path().startsWith("/api/tickets"),
                         http()
                 )
                 .before(uri("http://localhost:8082"))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> bookingServiceRoute() {
+
+        return route("booking-service")
+                .route(
+                        request -> request.path().startsWith("/api/bookings"),
+                        http()
+                )
+                .before(uri("http://localhost:8083"))
                 .build();
     }
 }
