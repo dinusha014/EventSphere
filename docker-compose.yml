@@ -1,0 +1,80 @@
+services:
+
+  mongodb:
+    image: mongo:7
+    container_name: eventsphere-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  event-service:
+    build:
+      context: ./event-service
+      dockerfile: Dockerfile
+    container_name: eventsphere-event-service
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_MONGODB_URI: mongodb://mongodb:27017/eventsphere_event_db
+    depends_on:
+      - mongodb
+
+  ticket-service:
+    build:
+      context: ./ticket-service
+      dockerfile: Dockerfile
+    container_name: eventsphere-ticket-service
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_MONGODB_URI: mongodb://mongodb:27017/test
+    depends_on:
+      - mongodb
+
+  booking-service:
+    build:
+      context: ./booking-service
+      dockerfile: Dockerfile
+    container_name: eventsphere-booking-service
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_MONGODB_URI: mongodb://mongodb:27017/eventsphere_booking
+    depends_on:
+      - mongodb
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: eventsphere-api-gateway
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SERVICES_EVENT_URL: http://event-service:8081
+      SERVICES_TICKET_URL: http://ticket-service:8082
+      SERVICES_BOOKING_URL: http://booking-service:8083
+    depends_on:
+      - event-service
+      - ticket-service
+      - booking-service
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: eventsphere-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - api-gateway
+
+volumes:
+  mongodb_data:
