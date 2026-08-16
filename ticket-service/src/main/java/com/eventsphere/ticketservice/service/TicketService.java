@@ -3,6 +3,7 @@ package com.eventsphere.ticketservice.service;
 import com.eventsphere.ticketservice.model.Ticket;
 import com.eventsphere.ticketservice.repository.TicketRepository;
 import org.springframework.stereotype.Service;
+import com.eventsphere.ticketservice.exception.TicketNotFoundException;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,19 +36,21 @@ public class TicketService {
         return ticketRepository.findAll();
     }
 
-    public Ticket getTicketById(String id) {
-        return ticketRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Ticket not found with ID: " + id));
-    }
+   public Ticket getTicketById(String id) {
+    return ticketRepository.findById(id)
+            .orElseThrow(() ->
+                    new TicketNotFoundException(
+                            "Ticket not found with ID: " + id
+                    ));
+}
 
     public Ticket getTicketByBookingId(String bookingId) {
-        return ticketRepository.findByBookingId(bookingId)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Ticket not found for booking ID: " + bookingId
-                        ));
-    }
+    return ticketRepository.findByBookingId(bookingId)
+            .orElseThrow(() ->
+                    new TicketNotFoundException(
+                            "Ticket not found for booking ID: " + bookingId
+                    ));
+}
 
     public List<Ticket> getTicketsByCustomerEmail(String customerEmail) {
         return ticketRepository.findByCustomerEmail(customerEmail);
@@ -65,7 +68,7 @@ public class TicketService {
     public void deleteTicket(String id) {
 
         if (!ticketRepository.existsById(id)) {
-            throw new RuntimeException(
+            throw new TicketNotFoundException(
                     "Ticket not found with ID: " + id
             );
         }
